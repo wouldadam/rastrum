@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "rastrum/Vector2D.h"
+
 namespace rastrum {
 
 #pragma pack()
@@ -31,7 +33,7 @@ class FrameBuffer {
 
   auto width() const -> size_t;
   auto height() const -> size_t;
-  
+
   /** Gets the raw data for the buffer. Data is indexed left to right, top to bottom. */
   auto data() const -> const rastrum::RGBA*;
 
@@ -39,12 +41,20 @@ class FrameBuffer {
   void set(size_t idx, RGBA value);
 
   /** Set a pixel to the specified value based on x/y position. */
-  void set(size_t x, size_t y, RGBA value);
+  void set(Point point, RGBA value);
+
+  /** Draws a line from start to end with the specified color. */
+  void line(Point start, Point end, RGBA value);
 
   /** Write the current buffer as a BMP to the specified file. */
   void write_bmp(const std::string& filename) const;
 
  private:
+  /** Line drawing for slopes between 0 and -1. */
+  void lineLow(Point start, Point end, RGBA value);
+  /** Line drawing for positive or negative steep slopes. */
+  void lineHigh(Point start, Point end, RGBA value);
+
   size_t _width;
   size_t _height;
   std::vector<RGBA> _data;
