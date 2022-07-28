@@ -28,5 +28,11 @@ After building the example apps in *apps* can be run:
 
 ```
 cd build
-apps/hello
+apps/<app>
 ```
+
+## Examples
+
+Wireframe rendering of the centurion helmet model:
+
+![Centurion helmet wireframe](./data/centurion_helmet/centurion_wireframe.jpg)

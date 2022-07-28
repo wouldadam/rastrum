@@ -46,6 +46,9 @@ class FrameBuffer {
   /** Draws a line from start to end with the specified color. */
   void line(Point start, Point end, RGBA value);
 
+  /** Draws a wireframe triangle at the 3 specified points. */
+  void triangle(Point a, Point b, Point c, RGBA value);
+
   /** Write the current buffer as a BMP to the specified file. */
   void write_bmp(const std::string& filename) const;
 

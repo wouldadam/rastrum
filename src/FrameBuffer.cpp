@@ -57,6 +57,12 @@ void rastrum::FrameBuffer::line(Point start, Point end, RGBA value) {
   }
 }
 
+void rastrum::FrameBuffer::triangle(Point a, Point b, Point c, RGBA value) {
+  line(a, b, value);
+  line(b, c, value);
+  line(c, a, value);
+}
+
 void rastrum::FrameBuffer::write_bmp(const std::string& filename) const {
   const auto result = stbi_write_bmp(filename.c_str(), _width, _height, 4, _data.data());
   if (result == 0) {
