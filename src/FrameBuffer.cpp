@@ -21,11 +21,21 @@ auto rastrum::FrameBuffer::data() const -> const rastrum::RGBA* {
 }
 
 void rastrum::FrameBuffer::set(size_t idx, RGBA value) {
+  if (idx >= _data.size()) {
+    std::cerr << "Attempted to access outside of framebuffer bounds: " << idx << "\n";
+    exit(1);
+  }
   _data[idx] = value;
 }
 
 void rastrum::FrameBuffer::set(Point point, RGBA value) {
   const auto idx = (point.y * _width) + point.x;
+  if (idx >= _data.size()) {
+    std::cerr << "Attempted to access outside of framebuffer bounds: " << idx << "," << point.x
+              << "," << point.y << "\n";
+    exit(1);
+  }
+
   _data[idx] = value;
 }
 
