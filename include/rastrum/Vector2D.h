@@ -1,10 +1,12 @@
 #ifndef RASTRUM_VECTOR2D_H
 #define RASTRUM_VECTOR2D_H
 
+namespace rastrum {
+
 /**
  * Represents a 2D vector.
  */
-template<typename T>
+template <typename T>
 struct Vector2D {
   T x;
   T y;
@@ -12,5 +14,7 @@ struct Vector2D {
 
 /** An integer 2D vector. */
 typedef Vector2D<int> Point;
+
+}  // namespace rastrum
 
 #endif
