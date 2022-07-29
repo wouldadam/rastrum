@@ -48,6 +48,6 @@ auto main() -> int {
   }
 
   // Write to an image
-  buffer.write_bmp(kOutputFile);
+  buffer.writeBmp(kOutputFile);
   std::cout << "Image written to " << kOutputFile << ".\n";
 }

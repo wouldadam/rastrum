@@ -50,7 +50,7 @@ class FrameBuffer {
   void triangle(Point a, Point b, Point c, RGBA value);
 
   /** Write the current buffer as a BMP to the specified file. */
-  void write_bmp(const std::string& filename) const;
+  void writeBmp(const std::string& filename) const;
 
  private:
   /** Line drawing for slopes between 0 and -1. */

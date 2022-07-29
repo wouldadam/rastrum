@@ -63,7 +63,7 @@ void rastrum::FrameBuffer::triangle(Point a, Point b, Point c, RGBA value) {
   line(c, a, value);
 }
 
-void rastrum::FrameBuffer::write_bmp(const std::string& filename) const {
+void rastrum::FrameBuffer::writeBmp(const std::string& filename) const {
   const auto result = stbi_write_bmp(filename.c_str(), _width, _height, 4, _data.data());
   if (result == 0) {
     std::cerr << "Failed to write image: " << result << "\n";
