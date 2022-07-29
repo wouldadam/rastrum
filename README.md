@@ -36,3 +36,8 @@ apps/<app>
 Wireframe rendering of the centurion helmet model:
 
 ![Centurion helmet wireframe](./data/centurion_helmet/centurion_wireframe.jpg)
+
+Unshaded rendering of the centurion helmet model:
+
+![Centurion helmet unshaded](./data/centurion_helmet/centurion_poly.jpg)
+
