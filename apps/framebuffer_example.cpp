@@ -23,7 +23,7 @@ auto main() -> int {
     for (auto h = 0; h < kBufferHeight; ++h) {
       RGBA col{static_cast<unsigned char>(w % kColMax), static_cast<unsigned char>(h % kColMax),
                static_cast<unsigned char>(w + h % kColMax), kColMax};
-      buffer.set(Point{w, h}, col);
+      buffer.set(Pixel{w, h}, col);
     }
   }
 
@@ -33,18 +33,18 @@ auto main() -> int {
   }
 
   // Draw lines from the center to all sides of the frame
-  const Point center{kBufferWidth / 2, kBufferHeight / 2};
+  const Vector2DF center{kBufferWidth / 2.0, kBufferHeight / 2.0};
 
-  for (auto x = 0; x <= kBufferWidth; x += kBufferWidth / kLinesPerSegment) {
-    buffer.line(center, Point{x, 0}, RGBA{0, 0, kColMax, kColMax});
+  for (auto x = 0; x < kBufferWidth; x += kBufferWidth / kLinesPerSegment) {
+    buffer.line(center, Vector2DF{(float)x, 0}, RGBA{0, 0, kColMax, kColMax});
 
-    buffer.line(center, Point{x, kBufferHeight - 1}, RGBA{kColMax, 0, kColMax, kColMax});
+    buffer.line(center, Vector2DF{(float)x, kBufferHeight - 1}, RGBA{kColMax, 0, kColMax, kColMax});
   }
 
-  for (auto y = 0; y <= kBufferHeight; y += kBufferHeight / kLinesPerSegment) {
-    buffer.line(center, Point{0, y}, RGBA{0, kColMax, 0, kColMax});
+  for (auto y = 0; y < kBufferHeight; y += kBufferHeight / kLinesPerSegment) {
+    buffer.line(center, Vector2DF{0, (float)y}, RGBA{0, kColMax, 0, kColMax});
 
-    buffer.line(center, Point{kBufferWidth - 1, y}, RGBA{kColMax, kColMax, 0, kColMax});
+    buffer.line(center, Vector2DF{kBufferWidth - 1, (float)y}, RGBA{kColMax, kColMax, 0, kColMax});
   }
 
   // Write to an image

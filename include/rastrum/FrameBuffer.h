@@ -41,25 +41,25 @@ class FrameBuffer {
   void set(size_t idx, RGBA value);
 
   /** Set a pixel to the specified value based on x/y position. */
-  void set(Point point, RGBA value);
+  void set(Pixel point, RGBA value);
 
   /** Draws a line from start to end with the specified color. */
-  void line(Point start, Point end, RGBA value);
+  void line(Vector2DF start, Vector2DF end, RGBA value);
 
   /** Draws a wireframe triangle at the 3 specified points. */
-  void triangle(Point a, Point b, Point c, RGBA value);
+  void triangle(Vector2DF a, Vector2DF b, Vector2DF c, RGBA value);
 
   /** Draws a filled triangle. */
-  void fillTriangle(Point a, Point b, Point c, RGBA value);
+  void fillTriangle(Vector2DF a, Vector2DF b, Vector2DF c, RGBA value);
 
   /** Write the current buffer as a BMP to the specified file. */
   void writeBmp(const std::string& filename) const;
 
  private:
   /** Line drawing for slopes between 0 and -1. */
-  void lineLow(Point start, Point end, RGBA value);
+  void lineLow(Pixel start, Pixel end, RGBA value);
   /** Line drawing for positive or negative steep slopes. */
-  void lineHigh(Point start, Point end, RGBA value);
+  void lineHigh(Pixel start, Pixel end, RGBA value);
 
   /**
    * Edge function, calculates which "side" a point p lies on the edge ab.
@@ -67,7 +67,7 @@ class FrameBuffer {
    * Zero = on the edge
    * Negative = left
    */
-  static auto edge(Point a, Point b, Point p) -> int;
+  static auto edge(Vector2DF a, Vector2DF b, Vector2DF p) -> float;
 
   size_t _width;
   size_t _height;

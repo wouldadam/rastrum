@@ -19,16 +19,16 @@ using namespace rastrum;
 
 /**
  * A very simple orthographic projection. Drops the Z axis, interpolates from min to max. */
-auto ortho(Vector3DF vert, Vector3DF min, Vector3DF max) -> Point {
+auto ortho(Vector3DF vert, Vector3DF min, Vector3DF max) -> Vector2DF {
   Vector3DF delta{max.x - min.x, max.y - min.y, max.z - min.z};
 
-  int x = static_cast<int>((kBufferWidth - 1) * (vert.x - min.x) / delta.x);
-  int y = static_cast<int>((kBufferHeight - 1) * (vert.y - min.y) / delta.y);
+  float x = (kBufferWidth - 1) * (vert.x - min.x) / delta.x;
+  float y = (kBufferHeight - 1) * (vert.y - min.y) / delta.y;
 
   // Invert the Y values as obj uses a right-hand coordinate system. */
   y = static_cast<int>(kBufferHeight) - 1 - y;
 
-  return Point{x, y};
+  return Vector2DF{x, y};
 }
 
 auto main(int argc, char* argv[]) -> int {

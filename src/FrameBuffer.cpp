@@ -1,5 +1,6 @@
 #include "rastrum/FrameBuffer.h"
 
+#include <cmath>
 #include <iostream>
 
 #include "stb/stb_image_write.h"
@@ -28,7 +29,7 @@ void rastrum::FrameBuffer::set(size_t idx, RGBA value) {
   _data[idx] = value;
 }
 
-void rastrum::FrameBuffer::set(Point point, RGBA value) {
+void rastrum::FrameBuffer::set(Pixel point, RGBA value) {
   const auto idx = (point.y * _width) + point.x;
   if (idx >= _data.size()) {
     std::cerr << "Attempted to access outside of framebuffer bounds: " << idx << "," << point.x
@@ -39,44 +40,50 @@ void rastrum::FrameBuffer::set(Point point, RGBA value) {
   _data[idx] = value;
 }
 
-void rastrum::FrameBuffer::line(Point start, Point end, RGBA value) {
+void rastrum::FrameBuffer::line(Vector2DF start, Vector2DF end, RGBA value) {
   // Uses https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+
+  Pixel start_pixel{static_cast<int>(std::round(start.x)), static_cast<int>(std::round(start.y))};
+  Pixel end_pixel{static_cast<int>(std::round(end.x)), static_cast<int>(std::round(end.y))};
 
   if (std::abs(end.y - start.y) < std::abs(end.x - start.x)) {
     if (start.x > end.x) {
-      lineLow(end, start, value);
+      lineLow(end_pixel, start_pixel, value);
     } else {
-      lineLow(start, end, value);
+      lineLow(start_pixel, end_pixel, value);
     }
   } else {
     if (start.y > end.y) {
-      lineHigh(end, start, value);
+      lineHigh(end_pixel, start_pixel, value);
     } else {
-      lineHigh(start, end, value);
+      lineHigh(start_pixel, end_pixel, value);
     }
   }
 }
 
-void rastrum::FrameBuffer::triangle(Point a, Point b, Point c, RGBA value) {
+void rastrum::FrameBuffer::triangle(Vector2DF a, Vector2DF b, Vector2DF c, RGBA value) {
   line(a, b, value);
   line(b, c, value);
   line(c, a, value);
 }
 
-void rastrum::FrameBuffer::fillTriangle(Point a, Point b, Point c, RGBA value) {
+void rastrum::FrameBuffer::fillTriangle(Vector2DF a, Vector2DF b, Vector2DF c, RGBA value) {
   // Calculate the bounding box so we don't have to test every pixel
-  const Point min{std::min(std::min(a.x, b.x), c.x), std::min(std::min(a.y, b.y), c.y)};
-  const Point max{std::max(std::max(a.x, b.x), c.x), std::max(std::max(a.y, b.y), c.y)};
+  const Pixel min{static_cast<int>(std::min(std::min(a.x, b.x), c.x)),
+                  static_cast<int>(std::min(std::min(a.y, b.y), c.y))};
+  const Pixel max{static_cast<int>(std::ceil(std::max(std::max(a.x, b.x), c.x))),
+                  static_cast<int>(std::ceil(std::max(std::max(a.y, b.y), c.y)))};
 
   // Check each point in the bounding box to see if it is in the triangle
   for (int x = min.x; x < max.x; ++x) {
     for (int y = min.y; y < max.y; ++y) {
-      bool inside = edge(a, b, Point{x, y}) <= 0;
-      inside &= edge(b, c, Point{x, y}) <= 0;
-      inside &= edge(c, a, Point{x, y}) <= 0;
+      Vector2DF p{static_cast<float>(x), static_cast<float>(y)};
+      bool inside = edge(a, b, p) <= 0;
+      inside &= edge(b, c, p) <= 0;
+      inside &= edge(c, a, p) <= 0;
 
       if (inside) {
-        set(Point{x, y}, value);
+        set(Pixel{x, y}, value);
       }
     }
   }
@@ -89,7 +96,7 @@ void rastrum::FrameBuffer::writeBmp(const std::string& filename) const {
   }
 }
 
-void rastrum::FrameBuffer::lineLow(Point start, Point end, RGBA value) {
+void rastrum::FrameBuffer::lineLow(Pixel start, Pixel end, RGBA value) {
   const auto deltaX = end.x - start.x;
   auto deltaY = end.y - start.y;
 
@@ -105,7 +112,7 @@ void rastrum::FrameBuffer::lineLow(Point start, Point end, RGBA value) {
   auto y = start.y;
 
   for (auto x = start.x; x < end.x; ++x) {
-    set(Point{x, y}, value);
+    set(Pixel{x, y}, value);
 
     if (D > 0) {
       y += yInc;
@@ -116,7 +123,7 @@ void rastrum::FrameBuffer::lineLow(Point start, Point end, RGBA value) {
   }
 }
 
-void rastrum::FrameBuffer::lineHigh(Point start, Point end, RGBA value) {
+void rastrum::FrameBuffer::lineHigh(Pixel start, Pixel end, RGBA value) {
   auto deltaX = end.x - start.x;
   const auto deltaY = end.y - start.y;
 
@@ -132,7 +139,7 @@ void rastrum::FrameBuffer::lineHigh(Point start, Point end, RGBA value) {
   auto x = start.x;
 
   for (auto y = start.y; y < end.y; ++y) {
-    set(Point{x, y}, value);
+    set(Pixel{x, y}, value);
 
     if (D > 0) {
       x += xInc;
@@ -143,7 +150,7 @@ void rastrum::FrameBuffer::lineHigh(Point start, Point end, RGBA value) {
   }
 }
 
-auto rastrum::FrameBuffer::edge(Point a, Point b, Point p) -> int {
+auto rastrum::FrameBuffer::edge(Vector2DF a, Vector2DF b, Vector2DF p) -> float {
   // See https://dl.acm.org/doi/10.1145/54852.378457
   const auto val = ((p.x - a.x) * (b.y - a.y) - (p.y - a.y) * (b.x - a.x));
   return val;

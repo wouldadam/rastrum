@@ -12,8 +12,11 @@ struct Vector2D {
   T y;
 };
 
+/** An 2D vector using floats. */
+typedef Vector2D<float> Vector2DF;
+
 /** An integer 2D vector. */
-typedef Vector2D<int> Point;
+typedef Vector2D<int> Pixel;
 
 }  // namespace rastrum
 
