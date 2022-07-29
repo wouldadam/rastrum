@@ -63,6 +63,25 @@ void rastrum::FrameBuffer::triangle(Point a, Point b, Point c, RGBA value) {
   line(c, a, value);
 }
 
+void rastrum::FrameBuffer::fillTriangle(Point a, Point b, Point c, RGBA value) {
+  // Calculate the bounding box so we don't have to test every pixel
+  const Point min{std::min(std::min(a.x, b.x), c.x), std::min(std::min(a.y, b.y), c.y)};
+  const Point max{std::max(std::max(a.x, b.x), c.x), std::max(std::max(a.y, b.y), c.y)};
+
+  // Check each point in the bounding box to see if it is in the triangle
+  for (int x = min.x; x < max.x; ++x) {
+    for (int y = min.y; y < max.y; ++y) {
+      bool inside = edge(a, b, Point{x, y}) <= 0;
+      inside &= edge(b, c, Point{x, y}) <= 0;
+      inside &= edge(c, a, Point{x, y}) <= 0;
+
+      if (inside) {
+        set(Point{x, y}, value);
+      }
+    }
+  }
+}
+
 void rastrum::FrameBuffer::writeBmp(const std::string& filename) const {
   const auto result = stbi_write_bmp(filename.c_str(), _width, _height, 4, _data.data());
   if (result == 0) {
@@ -122,4 +141,10 @@ void rastrum::FrameBuffer::lineHigh(Point start, Point end, RGBA value) {
       D += 2 * deltaX;
     }
   }
+}
+
+auto rastrum::FrameBuffer::edge(Point a, Point b, Point p) -> int {
+  // See https://dl.acm.org/doi/10.1145/54852.378457
+  const auto val = ((p.x - a.x) * (b.y - a.y) - (p.y - a.y) * (b.x - a.x));
+  return val;
 }

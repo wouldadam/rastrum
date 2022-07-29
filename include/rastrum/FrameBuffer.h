@@ -49,6 +49,9 @@ class FrameBuffer {
   /** Draws a wireframe triangle at the 3 specified points. */
   void triangle(Point a, Point b, Point c, RGBA value);
 
+  /** Draws a filled triangle. */
+  void fillTriangle(Point a, Point b, Point c, RGBA value);
+
   /** Write the current buffer as a BMP to the specified file. */
   void writeBmp(const std::string& filename) const;
 
@@ -57,6 +60,14 @@ class FrameBuffer {
   void lineLow(Point start, Point end, RGBA value);
   /** Line drawing for positive or negative steep slopes. */
   void lineHigh(Point start, Point end, RGBA value);
+
+  /**
+   * Edge function, calculates which "side" a point p lies on the edge ab.
+   * Positive = right
+   * Zero = on the edge
+   * Negative = left
+   */
+  static auto edge(Point a, Point b, Point p) -> int;
 
   size_t _width;
   size_t _height;

@@ -1,8 +1,12 @@
 /**
  * Example of loading and rendering an .obj model.
+ * Accepts the following command line args:
+ * -w  Render as a wireframe
  */
 
+#include <cstring>
 #include <iostream>
+#include <random>
 
 #include "rastrum/FrameBuffer.h"
 #include "rastrum/Obj.h"
@@ -27,7 +31,17 @@ auto ortho(Vector3DF vert, Vector3DF min, Vector3DF max) -> Point {
   return Point{x, y};
 }
 
-auto main() -> int {
+auto main(int argc, char* argv[]) -> int {
+  // Parse the command line options
+  bool wireframe = false;
+  if (argc > 1) {
+    for (int arg_idx = 1; arg_idx < argc; ++arg_idx) {
+      if (strcmp(argv[1], "-w") == 0) {
+        wireframe = true;
+      }
+    }
+  }
+
   FrameBuffer buffer(kBufferWidth, kBufferHeight);
 
   std::cout << "Creating " << buffer.width() << "x" << buffer.height() << " image...\n";
@@ -53,12 +67,25 @@ auto main() -> int {
     max.z = std::max(max.z, vert.z);
   }
 
+  // RNG for each poly's color
+  std::random_device dev;
+  std::mt19937 rng(dev());
+  std::uniform_int_distribution<std::mt19937::result_type> dist255(0, kColMax);
+
   // Project and draw each triangle
   for (size_t face_idx = 0; face_idx < model.face_count(); ++face_idx) {
     const auto face = model.face(face_idx);
 
-    buffer.triangle(ortho(face[0], min, max), ortho(face[1], min, max), ortho(face[2], min, max),
-                    RGBA{kColMax, 0, 0, kColMax});
+    if (wireframe) {
+      buffer.triangle(ortho(face[0], min, max), ortho(face[1], min, max), ortho(face[2], min, max),
+                      RGBA{(unsigned char)dist255(rng), (unsigned char)dist255(rng),
+                           (unsigned char)dist255(rng), kColMax});
+    } else {
+      buffer.fillTriangle(ortho(face[0], min, max), ortho(face[1], min, max),
+                          ortho(face[2], min, max),
+                          RGBA{(unsigned char)dist255(rng), (unsigned char)dist255(rng),
+                               (unsigned char)dist255(rng), kColMax});
+    }
   }
 
   // Write to an image
