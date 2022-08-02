@@ -41,3 +41,6 @@ Unshaded rendering of the centurion helmet model:
 
 ![Centurion helmet unshaded](./data/centurion_helmet/centurion_poly.jpg)
 
+Shaded rendering of the centurion hemlet model:
+![Centurion helmet shaded](./data/centurion_helmet/centurion_shaded.jpg)
+

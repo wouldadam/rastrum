@@ -11,11 +11,14 @@
 #include "rastrum/FrameBuffer.h"
 #include "rastrum/Obj.h"
 
+using namespace rastrum;
+
 constexpr size_t kBufferWidth = 2048;
 constexpr size_t kBufferHeight = 2048;
 constexpr auto kOutputFile = "image.bmp";
 
-using namespace rastrum;
+// The direction of the light source
+const Vector3DF kLight = Vector3DF{{0, 0, -20}}.normalize();
 
 /**
  * A very simple orthographic projection. Drops the Z axis, interpolates from min to max. */
@@ -34,10 +37,18 @@ auto ortho(Vector3DF vert, Vector3DF min, Vector3DF max) -> Vector2DF {
 auto main(int argc, char* argv[]) -> int {
   // Parse the command line options
   bool wireframe = false;
+  int min_color = kColMax / 2;
+  int max_color = kColMax / 2;
   if (argc > 1) {
     for (int arg_idx = 1; arg_idx < argc; ++arg_idx) {
-      if (strcmp(argv[1], "-w") == 0) {
+      if (strcmp(argv[arg_idx], "-w") == 0) {
+        std::cout << "WF\n";
         wireframe = true;
+      }
+      if (strcmp(argv[arg_idx], "-c") == 0) {
+        std::cout << "COL\n";
+        min_color = 0;
+        max_color = kColMax / 2;
       }
     }
   }
@@ -63,7 +74,7 @@ auto main(int argc, char* argv[]) -> int {
   // RNG for each poly's color
   std::random_device dev;
   std::mt19937 rng(dev());
-  std::uniform_int_distribution<std::mt19937::result_type> dist255(0, kColMax);
+  std::uniform_int_distribution<std::mt19937::result_type> dist(min_color, max_color);
 
   // Project and draw each triangle
   for (size_t face_idx = 0; face_idx < model.face_count(); ++face_idx) {
@@ -71,13 +82,20 @@ auto main(int argc, char* argv[]) -> int {
 
     if (wireframe) {
       buffer.triangle(ortho(face[0], min, max), ortho(face[1], min, max), ortho(face[2], min, max),
-                      RGBA{(unsigned char)dist255(rng), (unsigned char)dist255(rng),
-                           (unsigned char)dist255(rng), kColMax});
+                      RGBA{(unsigned char)(dist(rng) * 2), (unsigned char)(dist(rng) * 2),
+                           (unsigned char)(dist(rng) * 2), kColMax});
     } else {
-      buffer.fillTriangle(ortho(face[0], min, max), ortho(face[1], min, max),
-                          ortho(face[2], min, max),
-                          RGBA{(unsigned char)dist255(rng), (unsigned char)dist255(rng),
-                               (unsigned char)dist255(rng), kColMax});
+      // Use the dot product of the face's normal for some basic shading
+      const auto norm = normal(face[0], face[1], face[2]).normalize();
+      const auto dot = std::abs(norm.dot(kLight));
+
+      if (dot > 0.0F) {
+        const auto intensity = dot + 1.0F;
+        buffer.fillTriangle(
+            ortho(face[0], min, max), ortho(face[1], min, max), ortho(face[2], min, max),
+            RGBA{(unsigned char)(dist(rng) * intensity), (unsigned char)(dist(rng) * intensity),
+                 (unsigned char)(dist(rng) * intensity), kColMax});
+      }
     }
   }
 

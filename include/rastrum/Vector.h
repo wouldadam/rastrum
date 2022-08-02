@@ -124,6 +124,53 @@ class Vector {
     return Vector<T, D>{coords};
   }
 
+  /** Calculate the dot product of this vector and another vector. */
+  auto dot(const Vector<T, D>& v2) const -> T {
+    T dot_product = 0;
+
+    for (size_t idx = 0; idx < D; ++idx) {
+      dot_product += (*this)[idx] * v2[idx];
+    }
+
+    return dot_product;
+  }
+
+  /** Calculate the cross product of this vector and another vector. */
+  template <size_t _D = D, std::enable_if_t<(_D == 3), int> = 0>
+  auto cross(const Vector<T, D>& v2) const -> Vector<T, D> {
+    Vector<T, D> cross_product;
+    ;
+
+    cross_product.x((this->y() * v2.z()) - (this->z() * v2.y()));
+    cross_product.y((this->z() * v2.x()) - (this->x() * v2.z()));
+    cross_product.z((this->x() * v2.y()) - (this->y() * v2.x()));
+
+    return cross_product;
+  }
+
+  /** Calculate the magnitude of the vector. */
+  auto length() const -> T {
+    T length = 0;
+
+    for (size_t idx = 0; idx < D; ++idx) {
+      length += (*this)[idx] * (*this)[idx];
+    }
+
+    length = std::sqrt(length);
+    return length;
+  }
+
+  /** Normalise the vector (magnitude of 1) */
+  auto normalize() const -> Vector<T, D> {
+    const auto l = length();
+
+    if (l > 0) {
+      return (*this) / l;
+    }
+
+    return *this;
+  }
+
  private:
   std::array<T, D> _coords;
 };
@@ -170,7 +217,7 @@ auto max(const Vector<T, D>& lhs, const Vector<T, D>& rhs) -> Vector<T, D> {
   return res;
 }
 
-/** Vector subraction. */
+/** Vector subtraction. */
 template <typename T, size_t D>
 auto operator-(const Vector<T, D>& lhs, const Vector<T, D>& rhs) -> Vector<T, D> {
   Vector<T, D> res = lhs;
@@ -180,6 +227,28 @@ auto operator-(const Vector<T, D>& lhs, const Vector<T, D>& rhs) -> Vector<T, D>
   }
 
   return res;
+}
+
+/** Vector division by a scalar. */
+template <typename T, size_t D, typename S>
+auto operator/(const Vector<T, D>& lhs, S& rhs) -> Vector<T, D> {
+  Vector<T, D> res = lhs;
+
+  for (size_t idx = 0; idx < D; ++idx) {
+    res[idx] /= rhs;
+  }
+
+  return res;
+}
+
+/** Calculate the normal for a face described by 3 vectors. */
+template <typename T, size_t D>
+auto normal(const Vector<T, D>& v1, const Vector<T, D>& v2, const Vector<T, D>& v3)
+    -> Vector<T, D> {
+  const auto u = v2 - v1;
+  const auto v = v3 - v1;
+  const auto norm = u.cross(v);
+  return norm;
 }
 
 /** An 2D vector using floats. */
