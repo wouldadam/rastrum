@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "rastrum/Vector2D.h"
+#include "rastrum/Vector.h"
 
 namespace rastrum {
 

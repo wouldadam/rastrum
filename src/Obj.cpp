@@ -6,7 +6,7 @@
 #include <string_view>
 #include <vector>
 
-#include "rastrum/Vector3D.h"
+#include "rastrum/Vector.h"
 
 namespace {
 /**
@@ -72,7 +72,7 @@ auto rastrum::obj::load(const std::string& filename) -> rastrum::Model {
         }
       }
 
-      vertices.push_back(Vector3DF{vert[0], vert[1], vert[2]});
+      vertices.push_back(Vector3DF{{vert[0], vert[1], vert[2]}});
     } else if (line_view.starts_with("f ")) {
       // Face - we only support triangles
       line_view.remove_prefix(2);

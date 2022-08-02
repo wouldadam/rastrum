@@ -20,15 +20,15 @@ using namespace rastrum;
 /**
  * A very simple orthographic projection. Drops the Z axis, interpolates from min to max. */
 auto ortho(Vector3DF vert, Vector3DF min, Vector3DF max) -> Vector2DF {
-  Vector3DF delta{max.x - min.x, max.y - min.y, max.z - min.z};
+  Vector3DF delta{{max.x() - min.x(), max.y() - min.y(), max.z() - min.z()}};
 
-  float x = (kBufferWidth - 1) * (vert.x - min.x) / delta.x;
-  float y = (kBufferHeight - 1) * (vert.y - min.y) / delta.y;
+  float x = (kBufferWidth - 1) * (vert.x() - min.x()) / delta.x();
+  float y = (kBufferHeight - 1) * (vert.y() - min.y()) / delta.y();
 
   // Invert the Y values as obj uses a right-hand coordinate system. */
   y = static_cast<int>(kBufferHeight) - 1 - y;
 
-  return Vector2DF{x, y};
+  return Vector2DF{{x, y}};
 }
 
 auto main(int argc, char* argv[]) -> int {
@@ -53,18 +53,11 @@ auto main(int argc, char* argv[]) -> int {
   const auto& indices = model.vert_indices();
 
   // Find the min and max values of the verts as we are going the fill the screen with the model
-  Vector3DF min{std::numeric_limits<float>::max(), std::numeric_limits<float>::max(),
-                std::numeric_limits<float>::max()};
-  Vector3DF max{std::numeric_limits<float>::min(), std::numeric_limits<float>::min(),
-                std::numeric_limits<float>::min()};
+  Vector3DF min = Vector3DF::max();
+  Vector3DF max = Vector3DF::min();
   for (const auto& vert : verts) {
-    min.x = std::min(min.x, vert.x);
-    min.y = std::min(min.y, vert.y);
-    min.z = std::min(min.z, vert.z);
-
-    max.x = std::max(max.x, vert.x);
-    max.y = std::max(max.y, vert.y);
-    max.z = std::max(max.z, vert.z);
+    min = rastrum::min(min, vert);
+    max = rastrum::max(max, vert);
   }
 
   // RNG for each poly's color

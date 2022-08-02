@@ -2,8 +2,7 @@
 set(HEADERS ${PROJECT_SOURCE_DIR}/include/rastrum/FrameBuffer.h
             ${PROJECT_SOURCE_DIR}/include/rastrum/Model.h
             ${PROJECT_SOURCE_DIR}/include/rastrum/Obj.h
-            ${PROJECT_SOURCE_DIR}/include/rastrum/Vector2D.h
-            ${PROJECT_SOURCE_DIR}/include/rastrum/Vector3D.h)
+            ${PROJECT_SOURCE_DIR}/include/rastrum/Vector.h)
 set(SOURCES FrameBuffer.cpp
             Model.cpp
             Obj.cpp

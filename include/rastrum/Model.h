@@ -4,7 +4,7 @@
 #include <array>
 #include <vector>
 
-#include "rastrum/Vector3D.h"
+#include "rastrum/Vector.h"
 
 namespace rastrum {
 
