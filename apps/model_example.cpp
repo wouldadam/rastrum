@@ -42,11 +42,9 @@ auto main(int argc, char* argv[]) -> int {
   if (argc > 1) {
     for (int arg_idx = 1; arg_idx < argc; ++arg_idx) {
       if (strcmp(argv[arg_idx], "-w") == 0) {
-        std::cout << "WF\n";
         wireframe = true;
       }
       if (strcmp(argv[arg_idx], "-c") == 0) {
-        std::cout << "COL\n";
         min_color = 0;
         max_color = kColMax / 2;
       }
