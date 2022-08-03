@@ -22,7 +22,7 @@ const Vector3DF kLight = Vector3DF{{0, 0, -20}}.normalize();
 
 /**
  * A very simple orthographic projection. Drops the Z axis, interpolates from min to max. */
-auto ortho(Vector3DF vert, Vector3DF min, Vector3DF max) -> Vector2DF {
+auto ortho(Vector3DF vert, Vector3DF min, Vector3DF max) -> Vector3DF {
   Vector3DF delta{{max.x() - min.x(), max.y() - min.y(), max.z() - min.z()}};
 
   float x = (kBufferWidth - 1) * (vert.x() - min.x()) / delta.x();
@@ -31,7 +31,7 @@ auto ortho(Vector3DF vert, Vector3DF min, Vector3DF max) -> Vector2DF {
   // Invert the Y values as obj uses a right-hand coordinate system. */
   y = static_cast<int>(kBufferHeight) - 1 - y;
 
-  return Vector2DF{{x, y}};
+  return Vector3DF{{x, y, vert.z()}};
 }
 
 auto main(int argc, char* argv[]) -> int {

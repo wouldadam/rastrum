@@ -38,28 +38,28 @@ class FrameBuffer {
   auto data() const -> const rastrum::RGBA*;
 
   /** Set a pixel to the specified value based on linear position. */
-  void set(size_t idx, RGBA value);
+  void set(size_t idx, RGBA value, float z);
 
   /** Set a pixel to the specified value based on x/y position. */
-  void set(Pixel point, RGBA value);
+  void set(Pixel point, RGBA value, float z);
 
-  /** Draws a line from start to end with the specified color. */
-  void line(Vector2DF start, Vector2DF end, RGBA value);
+  /** Draws a line from start to end with the specified color and z-order. */
+  void line(Vector3DF start, Vector3DF end, RGBA value);
 
   /** Draws a wireframe triangle at the 3 specified points. */
-  void triangle(Vector2DF a, Vector2DF b, Vector2DF c, RGBA value);
+  void triangle(Vector3DF a, Vector3DF b, Vector3DF c, RGBA value);
 
   /** Draws a filled triangle. */
-  void fillTriangle(Vector2DF a, Vector2DF b, Vector2DF c, RGBA value);
+  void fillTriangle(Vector3DF a, Vector3DF b, Vector3DF c, RGBA value);
 
   /** Write the current buffer as a BMP to the specified file. */
   void writeBmp(const std::string& filename) const;
 
  private:
   /** Line drawing for slopes between 0 and -1. */
-  void lineLow(Pixel start, Pixel end, RGBA value);
+  void lineLow(Vector3DF start, Vector3DF end, RGBA value);
   /** Line drawing for positive or negative steep slopes. */
-  void lineHigh(Pixel start, Pixel end, RGBA value);
+  void lineHigh(Vector3DF start, Vector3DF end, RGBA value);
 
   /**
    * Edge function, calculates which "side" a point p lies on the edge ab.
@@ -67,11 +67,12 @@ class FrameBuffer {
    * Zero = on the edge
    * Negative = left
    */
-  static auto edge(Vector2DF a, Vector2DF b, Vector2DF p) -> float;
+  static auto edge(Vector3DF a, Vector3DF b, Vector3DF p) -> float;
 
   size_t _width;
   size_t _height;
   std::vector<RGBA> _data;
+  std::vector<float> _z_buffer;
 };
 
 }  // namespace rastrum

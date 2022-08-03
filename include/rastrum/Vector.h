@@ -97,6 +97,19 @@ class Vector {
     return Vector<A, D>{coords};
   }
 
+  /**
+   * Create a Vector with a new dimension.
+   * Shorter Vectors are have their coords truncated.
+   * Longer Vectors have new coords set to the default value for the type.
+   */
+  template <size_t R>
+  auto resize() const -> Vector<T, R> {
+    std::array<T, R> coords;
+    std::copy(_coords.begin(), _coords.begin() + std::min(D, R), coords.begin());
+
+    return Vector<T, R>{coords};
+  }
+
   /** Returns a new vector with each coord being ceil(coord). */
   auto ceil() const -> Vector<T, D> {
     std::array<T, D> coords;
