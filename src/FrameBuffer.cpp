@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "stb/stb_image_write.h"
+#include "terminal.h"
 
 rastrum::FrameBuffer::FrameBuffer(size_t width, size_t height)
     : _width(width), _height(height), _data(width * height), _z_buffer(width * height) {
@@ -106,6 +107,26 @@ void rastrum::FrameBuffer::writeBmp(const std::string& filename) const {
   if (result == 0) {
     std::cerr << "Failed to write image: " << result << "\n";
   }
+}
+
+void rastrum::FrameBuffer::writeConsole() const {
+  constexpr auto kBlockChar = "\u2588";
+
+  terminal::clear();
+
+  for (size_t y = 0; y < _height; ++y) {
+    for (size_t x = 0; x < _width; ++x) {
+      terminal::setColor(_data[(y * _width) + x]);
+
+      // Intentionally written twice as terminal segments are often
+      // roughly twice as tall as they are wide.
+      std::cout << kBlockChar << kBlockChar;
+    }
+
+    std::cout << "\n";
+  }
+
+  terminal::reset();
 }
 
 void rastrum::FrameBuffer::lineLow(Vector3DF start, Vector3DF end, RGBA value) {

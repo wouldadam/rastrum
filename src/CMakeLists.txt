@@ -6,7 +6,9 @@ set(HEADERS ${PROJECT_SOURCE_DIR}/include/rastrum/FrameBuffer.h
 set(SOURCES FrameBuffer.cpp
             Model.cpp
             Obj.cpp
-            stb.cpp)
+            stb.cpp
+            terminal.cpp
+            terminal.h)
 
 # The main library
 add_library(rastrum ${SOURCES} ${HEADERS})

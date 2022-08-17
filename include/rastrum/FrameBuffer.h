@@ -55,6 +55,9 @@ class FrameBuffer {
   /** Write the current buffer as a BMP to the specified file. */
   void writeBmp(const std::string& filename) const;
 
+  /** Write the current buffer to the terminal. */
+  void writeConsole() const;
+
  private:
   /** Line drawing for slopes between 0 and -1. */
   void lineLow(Vector3DF start, Vector3DF end, RGBA value);

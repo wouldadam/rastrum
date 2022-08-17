@@ -37,6 +37,7 @@ auto ortho(Vector3DF vert, Vector3DF min, Vector3DF max) -> Vector3DF {
 auto main(int argc, char* argv[]) -> int {
   // Parse the command line options
   bool wireframe = false;
+  bool terminal = false;
   int min_color = kColMax / 2;
   int max_color = kColMax / 2;
   if (argc > 1) {
@@ -48,12 +49,15 @@ auto main(int argc, char* argv[]) -> int {
         min_color = 0;
         max_color = kColMax / 2;
       }
+      if (strcmp(argv[arg_idx], "-t") == 0) {
+        terminal = true;
+      }
     }
   }
 
   FrameBuffer buffer(kBufferWidth, kBufferHeight);
 
-  std::cout << "Creating " << buffer.width() << "x" << buffer.height() << " image...\n";
+  std::cout << "Creating " << buffer.width() << "x" << buffer.height() << " frame...\n";
 
   // Load the model
   const auto model = obj::load("../data/centurion_helmet/centurion_helmet.obj");
@@ -97,7 +101,11 @@ auto main(int argc, char* argv[]) -> int {
     }
   }
 
-  // Write to an image
-  buffer.writeBmp(kOutputFile);
-  std::cout << "Image written to " << kOutputFile << ".\n";
+  // Output the frame
+  if (terminal) {
+    buffer.writeConsole();
+  } else {
+    buffer.writeBmp(kOutputFile);
+    std::cout << "Image written to " << kOutputFile << ".\n";
+  }
 }
